@@ -1,13 +1,36 @@
 body {
-  padding: 50px 0px;
+  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: forestgreen;
-  text-decoration: none;
+//a {
+//  text-decoration: none;
+//  color: forestgreen;
+//}
+
+
+
+
+
+.anim.ng-enter {
+  transition: opacity 2s;
+  opacity: 0.0;
 }
 
-.navbar .navbar-default .navbar-inner {
-  background-color: blue;
+.anim.ng-enter-active {
+  opacity: 1.0;
+}
+.anim.ng-leave {
+  display: none;
+}
+
+
+.animate-enter {
+  -webkit-transition: 1s linear all; /* Chrome */
+  transition: 1s linear all;
+  opacity: 0;
+}
+
+.animate-enter.animate-enter-active {
+  opacity: 1;
 }

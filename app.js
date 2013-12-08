@@ -37,6 +37,6 @@ server.listen(app.get('port'), function(){
 });
 
 io.sockets.on('connection', function(socket) {
-
+   console.log('connected');
 });
 
