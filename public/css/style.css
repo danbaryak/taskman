@@ -2,6 +2,9 @@ body {
   padding: 50px;
   margin-top: 30px;
 }
+html {
+  overflow-y: scroll;
+}
 .anim.ng-enter {
   transition: opacity 1s;
   opacity: 0.0;
@@ -15,7 +18,6 @@ body {
 .animate-enter {
   -webkit-transition: 1s linear all;
   /* Chrome */
-
   transition: 1s linear all;
   opacity: 0;
 }
@@ -28,4 +30,20 @@ body {
 .jumbotron {
   background-color: #97dbff;
   border-radius: 10px;
+}
+.nav .navbar-nav ul li {
+  color: yellow;
+}
+.node {
+  stroke: #303030;
+  stroke-width: 1.5px;
+}
+.link {
+  stroke: #676767;
+  stroke-opacity: .6;
+}
+.graph {
+  border-color: #8db4e1;
+  border-radius: 8px;
+  background: black;
 }

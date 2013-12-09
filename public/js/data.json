@@ -1,0 +1,39 @@
+{
+    "nodes":[
+        {"name":"Myriel","group":1},
+        {"name":"Napoleon","group":2},
+        {"name":"Mlle.Baptistine","group":3},
+        {"name":"Mme.Magloire","group":1},
+        {"name":"CountessdeLo","group":4},
+        {"name":"Geborand","group":5},
+        {"name":"Champtercier","group":5},
+        {"name":"Cravatte","group":1},
+        {"name":"Count","group":1},
+        {"name":"OldMan","group":1},
+        {"name":"Labarre","group":5},
+        {"name":"Valjean","group":6},
+        {"name":"Marguerite","group":7},
+        {"name":"Marguerite","group":8},
+        {"name":"Marguerite","group":9},
+        {"name":"Champtercier","group":5},
+        {"name":"Cravatte","group":1},
+        {"name":"Count","group":1},
+        {"name":"OldMan","group":1},
+        {"name":"Labarre","group":5},
+        {"name":"Valjean","group":6},
+        {"name":"Marguerite","group":7},
+        {"name":"Marguerite","group":8},
+        {"name":"Marguerite","group":9}
+
+
+    ],
+    "links":[
+        {"source":1,"target":0,"value":1},
+        {"source":2,"target":0,"value":8},
+        {"source":3,"target":0,"value":40},
+        {"source":11,"target":12,"value":6},
+        {"source":11,"target":10,"value":1},
+        {"source":12,"target":10,"value":1}
+
+    ]
+}
