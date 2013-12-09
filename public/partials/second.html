@@ -1,16 +1,18 @@
 
 
 
-<div ng-controller="NavCtrl" class="container">
+<div ng-controller="NavCtrl">
+    <div>
     <div class="col-md-2">
         <div class="well">
-        <ul class="nav" style="height: 100%">
+        <ul class="nav nav-stacked">
             <li ng-class="{active: $routeSegment.name == 'second.overview'}"><a href="#second/overview">Overview</a></li>
-            <li><a class="active" href="#second/info">Info</a></li>
+            <li ng-class="{active: $routeSegment.name == 'second.info'}"><a class="active" href="#second/info">Info</a></li>
         </ul>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8" >
         <div class="anim" app-view-segment="1"></div>
+    </div>
     </div>
 </div>
