@@ -38,7 +38,7 @@ html {
 }
 
 .navbar-inner {
-  background-color: #1a517f;
+//  background-color: #1a517f;
 }
 .jumbotron {
   background-color: #97dbff;
@@ -66,4 +66,24 @@ html {
   background: black;
 }
 
+.task {
+  padding: 5px;
+  border-bottom: 1px solid lightgrey;
+  background-color: #f6f6f6;
 
+  input[type=text] {
+    border: none;
+    background: none;
+    width: 100%;
+  }
+
+  .children {
+    border-left: 6px solid royalblue;
+    border-top: 1px solid lightgrey;
+  }
+
+}
+
+input:focus {
+  outline: none;
+}

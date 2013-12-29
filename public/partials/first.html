@@ -1,5 +1,5 @@
-<div class="jumbotron">
-    <h1>Hello</h1>
-    <p>Nice to see you</p>
-    <p><a class="btn btn-primary btn-lg" role="button">Start Here</a></p>
+<div ng-controller="TasksCtrl">
+
+    <button class="button button-default" ng-click="addTask()">Add</button>
+    <task ng-repeat="t in tasks" task="t" parent="this"></task>
 </div>

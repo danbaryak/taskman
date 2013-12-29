@@ -5,10 +5,87 @@ var app = angular.module('app', [
     'ngAnimate'
 ]);
 
+
+app.directive('ngEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.ngEnter);
+                });
+
+                event.preventDefault();
+            }
+        });
+    };
+});
+
 function NavCtrl($scope, $routeSegment) {
     $scope.$routeSegment = $routeSegment;
 }
 
+
+app.factory('RecursionHelper', ['$compile', function($compile){
+    var RecursionHelper = {
+        compile: function(element){
+            var contents = element.contents().remove();
+            var compiledContents;
+            return function(scope, element){
+                if(!compiledContents){
+                    compiledContents = $compile(contents);
+                }
+                compiledContents(scope, function(clone){
+                    element.append(clone);
+                });
+            };
+        }
+    };
+
+    return RecursionHelper;
+}]);
+
+app.directive('task', ['$timeout', 'RecursionHelper', function ($timeout, RecursionHelper) {
+    return {
+        restrict: 'E',
+        scope: {task: '=', parent: '='},
+        templateUrl: '/partials/task.html',
+        replace: true,
+        compile: function(element) {
+            return RecursionHelper.compile(element);
+        }
+    };
+}]);
+
+function TasksCtrl($scope, $routeSegment) {
+    $scope.$routeSegment = $routeSegment;
+    $scope.tasks = [
+        {
+            name: 'hi',
+            children: [
+                { name: 'a child' },
+                { name: 'another child' }
+            ]
+        },
+        { name: 'whatever'}
+    ]
+    $scope.$apply();
+
+    $scope.inc = function() {
+        $scope.count = $scope.count + 1;
+
+    }
+    $scope.addTask = function () {
+        $scope.tasks.push({ name: '' })
+        $scope.$apply();
+    }
+    $scope.keyPressed = function(task) {
+        console.log("key pressed");
+    }
+    $scope.addTaskAfter = function(task) {
+        var index = $scope.tasks.indexOf(task);
+        $scope.tasks.insert(index, { name: 'another one'});
+    }
+}
 
 function InfoCtrl($scope, $routeSegment) {
 
@@ -82,8 +159,8 @@ function InfoCtrl($scope, $routeSegment) {
             d3.select("#d3_graph")
                 .on("mousemove.drag", self.mousemove())
                 .on("touchmove.drag", self.mousemove())
-                .on("mouseup.drag",   self.mouseup())
-                .on("touchend.drag",  self.mouseup());
+                .on("mouseup.drag", self.mouseup())
+                .on("touchend.drag", self.mouseup());
 
             svg.call(d3.behavior.zoom().x(this.x).y(this.y).on("zoom", this.redraw()));
         });
