@@ -8,6 +8,10 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var mongo = require('mongoskin');
+var db = mongo.db('localhost:27017/tasks?auto_reconnect', { safe: false });
+
+var tasks = db.collection('tasks');
 
 var app = express();
 
@@ -37,6 +41,32 @@ server.listen(app.get('port'), function(){
 });
 
 io.sockets.on('connection', function(socket) {
-   console.log('connected');
+    console.log('connected');
+
+    socket.on('add_task', function(task, cb) {
+        tasks.insert(task, function(err, tasks) {
+            cb(err, err ? null : tasks[0]);
+        });
+    });
+
+    socket.on('update_task', function(task) {
+        var id = task._id;
+        delete task._id;
+        tasks.updateById(id, { $set: { name: task.name, profile: task.profile, children: task.children, effort: task.effort} }, function(err, task) {
+            console.log('saved');
+        });
+    })
+
+    socket.on('get_all_tasks', function(data, cb) {
+        tasks.find().toArray(function(err, tasks) {
+            cb(tasks);
+        });
+    })
+    socket.on('delete_task', function(id, cb) {
+       tasks.removeById(id, function(err) {
+          cb(err);
+       });
+    });
+
 });
 

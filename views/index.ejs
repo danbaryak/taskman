@@ -14,18 +14,18 @@
 <body>
 <div ng-controller="NavCtrl" id="nav" class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
-        <div class="container">
-            <ul class="nav navbar-nav">
-                <li ng-class="{active: $routeSegment.startsWith('first')}"><a href="#">Home</a></li>
-                <li ng-class="{active: $routeSegment.startsWith('second')}"><a href="#second/overview">Settings</a></li>
-            </ul>
 
-        </div>
+        <ul class="nav navbar-nav">
+            <li ng-class="{active: $routeSegment.startsWith('first')}"><a href="#">Home</a></li>
+            <li ng-class="{active: $routeSegment.startsWith('second')}"><a href="#second/overview">Settings</a></li>
+        </ul>
+
+
     </div>
 
 </div>
 
-<div class="container">
+<div>
     <div app-view-segment="0" class="anim"></div>
 </div>
 

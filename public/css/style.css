@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  padding: 20px 0px;
   margin-top: 30px;
 }
 html {
@@ -24,6 +24,9 @@ html {
 .animate-enter.animate-enter-active {
   opacity: 1;
 }
+.navbar-inner {
+  background-color: #396ac9;
+}
 .jumbotron {
   background-color: #97dbff;
   border-radius: 10px;
@@ -45,19 +48,71 @@ html {
   background: black;
 }
 .task {
-  padding: 5px;
-  border-bottom: 1px solid lightgrey;
-  background-color: #f6f6f6;
+  padding: 0px 0px 0px 0px;
+  min-height: 47px;
+  margin: 1px 0px 1px 0px;
+  background-color: #e7e7e7;
 }
-.task input[type=text] {
+.task textarea {
+  padding: 5px 0px 2px 50px;
+  color: #262626;
+  resize: none;
+  font-size: 13px;
+  overflow-x: visible;
   border: none;
   background: none;
-  width: 100%;
+}
+.task .header {
+  border: none;
+  background: #1f1f1f;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  height: 48px;
+  width: 40px;
+  position: absolute;
+  padding-top: 5px;
+  vertical-position: middle;
 }
 .task .children {
-  border-left: 6px solid royalblue;
-  border-top: 1px solid lightgrey;
+  background: grey;
+  border-top: 1px solid grey;
+  margin-top: 0px;
+  margin-left: 10px;
 }
 input:focus {
   outline: none;
+}
+textarea:focus {
+  outline: none;
+}
+.subject {
+  font-size: 13px;
+  color: #152377;
+}
+.task-default {
+  background-color: #f5f5f5;
+}
+.task-feature {
+  background-color: #e7e7e7;
+}
+.task-coding {
+  background-color: #f4f4f4;
+}
+.tasks-list {
+  width: 400px;
+  background-color: grey;
+}
+.effort input[type=text] {
+  border: none;
+  background: #1f1f1f;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  height: 48px;
+  width: 40px;
+  left: 360px;
+  position: absolute;
 }

@@ -4,18 +4,85 @@ var app = angular.module('app', [
     'view-segment',
     'ngAnimate'
 ]);
-
+var task_id_gen = 0;
+app.directive('autoFocus', function () {
+    return {
+        restrict: 'AC',
+        link: function (_scope, _element) {
+            _element[0].focus();
+        }
+    };
+});
 
 app.directive('ngEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
-            if(event.which === 13) {
-                scope.$apply(function (){
+            if (event.which === 13 && event.metaKey == false) {
+                scope.$apply(function () {
                     scope.$eval(attrs.ngEnter);
                 });
-
                 event.preventDefault();
             }
+        });
+    };
+});
+
+app.directive('keyPressed', function () {
+    return function (scope, element, attrs) {
+
+        element.bind("keydown keypress", function (event) {
+
+            if (event.which === 13 ) {
+
+                if (event.metaKey) {
+                    scope.addChild();
+                } else if (event.shiftKey) {
+                    element.parent().parent().scope().addAfter();
+                } else {
+                    scope.addAfter();
+                }
+
+                event.preventDefault();
+            } else if (event.keyCode === 186) { // ':'
+                // add a new subject
+                var subjectName = scope.task.name.trim();
+                if (subjectName == 'f') {
+                    var profile = {
+                        imageUrl: 'images/user.png',
+                        className: 'task-feature'
+                    }
+                    scope.task.profile = profile;
+                    scope.task.name = '';
+                    scope.$apply();
+                    event.preventDefault();
+                } else if (subjectName == 'c') {
+                    var profile = {
+                        imageUrl: 'images/coding.png',
+                        className: 'task-coding'
+                    }
+                    scope.task.profile = profile;
+                    scope.task.name = '';
+                    scope.$apply();
+                    event.preventDefault();
+                }
+
+            } else if (event.keyCode === 8) { // backspace
+                if (scope.task.name == '') {
+                    if (scope.task.subjects.length > 0) {
+                        scope.task.subjects.pop();
+                        scope.$apply();
+                    } else {
+                        // no scope, delete task if it has no children
+                        if (scope.task.children.length == 0) {
+                            scope.deleteSelf();
+                        }
+                    }
+
+                }
+            } else if (event.keyCode === 46) {
+
+            }
+
         });
     };
 });
@@ -25,16 +92,16 @@ function NavCtrl($scope, $routeSegment) {
 }
 
 
-app.factory('RecursionHelper', ['$compile', function($compile){
+app.factory('RecursionHelper', ['$compile', function ($compile) {
     var RecursionHelper = {
-        compile: function(element){
+        compile: function (element) {
             var contents = element.contents().remove();
             var compiledContents;
-            return function(scope, element){
-                if(!compiledContents){
+            return function (scope, element) {
+                if (!compiledContents) {
                     compiledContents = $compile(contents);
                 }
-                compiledContents(scope, function(clone){
+                compiledContents(scope, function (clone) {
                     element.append(clone);
                 });
             };
@@ -44,46 +111,169 @@ app.factory('RecursionHelper', ['$compile', function($compile){
     return RecursionHelper;
 }]);
 
-app.directive('task', ['$timeout', 'RecursionHelper', function ($timeout, RecursionHelper) {
+app.directive('task', ['$timeout', 'RecursionHelper', '$compile', function ($timeout, RecursionHelper, $compile) {
     return {
         restrict: 'E',
-        scope: {task: '=', parent: '='},
+        scope: {task: '=', parent: '=', index: '='},
         templateUrl: '/partials/task.html',
         replace: true,
-        compile: function(element) {
-            return RecursionHelper.compile(element);
+        compile: function (element) {
+            var contents = element.contents().remove();
+            var compiledContents;
+            return function (scope, elm) {
+
+                if (!compiledContents) {
+                    compiledContents = $compile(contents);
+                }
+
+                compiledContents(scope, function (clone) {
+                    elm.append(clone);
+                });
+
+                scope.addChild = function () {
+                    scope.task.children.push(createTask('', scope.task));
+                    scope.collapsed = false;
+                    scope.$apply();
+                }
+                scope.toggle = function() {
+                    scope.collapsed = ! scope.collapsed;
+                }
+                scope.addChildAfter = function (index) {
+                    if (index + 1 >= scope.task.children.length) {
+                        scope.task.children.push(createTask('', scope.task));
+                    } else {
+                        scope.task.children.splice(index + 1, 0, createTask('', scope.task)).join();
+                    }
+                }
+                scope.getBackground = function() {
+                    return scope.task.children.length > 0 ? '#1f1f1f' : '#5E5E5E';
+                }
+                scope.deleteChild = function(task, index) {
+                    scope.task.children.splice(index, 1);
+                    scope.$apply();
+                }
+
+                scope.deleteSelf = function() {
+                    elm.parent().scope().deleteChild(scope.task, scope.index);
+                    elm.parent().scope().taskChanged();
+                }
+
+                scope.addAfter = function () {
+                    elm.parent().scope().addChildAfter(scope.index);
+                    scope.$apply();
+                }
+
+                scope.taskChanged = function() {
+                    updateEffort(scope.task);
+                    socket.emit('update_task', scope.task);
+                    elm.parent().scope().taskChanged();
+                }
+
+
+
+
+            };
+
         }
     };
 }]);
 
-function TasksCtrl($scope, $routeSegment) {
+function updateEffort(task) {
+    if (task.children.length > 0) {
+        task.effort = 0;
+        for (var i = 0; i < task.children.length; i++) {
+            if (task.children[i].effort && task.children[i].effort != '') {
+                task.effort += eval(task.children[i].effort);
+            }
+        }
+    }
+}
+function TasksCtrl($timeout, $scope, $routeSegment) {
     $scope.$routeSegment = $routeSegment;
-    $scope.tasks = [
-        {
-            name: 'hi',
-            children: [
-                { name: 'a child' },
-                { name: 'another child' }
-            ]
-        },
-        { name: 'whatever'}
-    ]
-    $scope.$apply();
+    $scope.tasks = [];
 
-    $scope.inc = function() {
+
+    $scope.init = function() {
+        $scope.loadAllTasks();
+    }
+
+    $scope.loadAllTasks = function() {
+        $timeout(function() {
+            $scope.tasks = [];
+            socket.emit('get_all_tasks', null, function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    $scope.tasks.push(data[i]);
+                }
+                $scope.$apply();
+            })
+        });
+    }
+
+    $scope.addChild = function () {
+        $scope.tasks.push(createTask('', $scope));
+    }
+
+    $scope.inc = function () {
         $scope.count = $scope.count + 1;
 
     }
     $scope.addTask = function () {
         $scope.tasks.push({ name: '' })
-        $scope.$apply();
+
     }
-    $scope.keyPressed = function(task) {
+    $scope.keyPressed = function (task) {
         console.log("key pressed");
     }
-    $scope.addTaskAfter = function(task) {
-        var index = $scope.tasks.indexOf(task);
+
+    $scope.deleteChild = function(task, taskIndex) {
+        var id = task._id;
+        socket.emit('delete_task', id, function(err) {
+            if (! err) {
+                $scope.tasks.splice(taskIndex, 1);
+                $scope.$apply();
+            }
+        });
+    }
+    $scope.taskChanged = function() {
+
+    }
+    $scope.addTaskAfter = function (index) {
         $scope.tasks.insert(index, { name: 'another one'});
+    }
+    $scope.addChildAfter = function (index) {
+        var newTask = createTask('', $scope);
+        socket.emit('add_task', newTask, function(err, updatedTask) {
+            if (!err) {
+                if (index + 1 < $scope.tasks.length) {
+                    $scope.tasks.splice(index + 1, 0, updatedTask).join();
+                } else {
+                    $scope.tasks.push(updatedTask);
+                }
+                $scope.$apply();
+            }
+        });
+
+    }
+}
+
+function createTask(name, parent) {
+    return {
+        id: task_id_gen++,
+        name: name,
+        subjects: [],
+        children: [],
+        profile: {
+            className: "task-default"
+        }
+    }
+}
+
+
+function createSubject(name, imageUrl, className) {
+    return {
+        name: name,
+        imageUrl: imageUrl,
+        className: className
     }
 }
 

@@ -1,7 +1,16 @@
-<div class="task">
-    <input type="text" ng-model="task.name" ng-keypress="keyPressed()"/>
-    <div ng-if="task.children && task.children.length > 0" class="children">
-      <task ng-repeat="t in task.children" task="t" parent="task"></task>
+<div class="task {{task.profile.className}}" ng-init="collapsed = true;">
+    <div>
+        <span class="header">
+            <img style="cursor: pointer" ng-if="task.children.length > 0" src="images/folder-white.png" width="38px" ng-click="toggle()"/>
+        </span>
+        <textarea spellcheck=false style="width: 85%" ng-model="task.name" ng-change="taskChanged()" key-pressed auto-focus/>
+        <span class="effort">
+            <input style="background: {{getBackground()}}" ng-editable="task.children.length == 0" type="text" width="2" ng-model="task.effort" ng-change="taskChanged()"/>
+            <!--<span ng-if="task.children.length >0">{{task.effort}}</span>-->
+        </span>
+    </div>
+    <div ng-if="collapsed == false" class="children">
+      <task ng-repeat="t in task.children" task="task.children[$index]" index="$index"></task>
     </div>
 </div>
 

@@ -1,5 +1,6 @@
-<div ng-controller="TasksCtrl">
+<div ng-controller="TasksCtrl" data-ng-init="init()">
 
-    <button class="button button-default" ng-click="addTask()">Add</button>
-    <task ng-repeat="t in tasks" task="t" parent="this"></task>
+    <div class="tasks-list">
+        <task ng-repeat="t in tasks" task="tasks[$index]" parent="this" index="$index"></task>
+    </div>
 </div>
