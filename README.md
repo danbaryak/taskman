@@ -1,4 +1,4 @@
 taskman
 =======
 
-A simple application for hierarchial task management. 
+A simple application for hierarchical task management. 
