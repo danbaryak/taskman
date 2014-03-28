@@ -9,13 +9,13 @@ var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var mongo = require('mongoskin');
-var db = mongo.db('localhost:27017/tasks?auto_reconnect', { safe: false });
+var db = mongo.db('mongodb://localhost:27017/tasks', { safe: false });
 
 var tasks = db.collection('tasks');
 
 var app = express();
 
-app.set('port', process.env.PORT || 3040);
+app.set('port', process.env.PORT || 3050);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.favicon());
@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
-app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
+app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
